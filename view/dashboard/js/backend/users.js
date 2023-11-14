@@ -166,8 +166,9 @@ function showModal(id) {
 
     getUserById(id).then(user => {
         console.log(user)
-        document.getElementById('updateUsername').value = user.username
-        document.getElementById('updatePassword').value = user.password
+        result = user.data;
+        document.getElementById('updateUsername').value = result.username;
+        document.getElementById('updatePassword').value = result.password;
     })
         .catch(error => {
             console.error(`Error: ${error}`)

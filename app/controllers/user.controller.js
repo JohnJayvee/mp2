@@ -1,7 +1,7 @@
 const db = require("../models");
 const User = db.users;
 const Op = db.Sequelize.Op;
-  
+
 // Create and Save a new user
 exports.create = (req, res) => {
   // Validate request
@@ -13,7 +13,7 @@ exports.create = (req, res) => {
   }
 
   // Create a user
-  const user = {  
+  const user = {
     username: req.body.username,
     password: req.body.password
   };
@@ -21,7 +21,12 @@ exports.create = (req, res) => {
   // Save user in the database
   User.create(user)
     .then(data => {
-      res.send({
+      // res.send({
+      //   message: "User created successfully!",
+      //   data: data
+      // });
+      res.status(201).json({
+        status: true,
         message: "User created successfully!",
         data: data
       });
@@ -37,7 +42,7 @@ exports.create = (req, res) => {
 exports.findAll = (req, res) => {
   const username = req.query.username;
   var condition = username ? { username: { [Op.like]: `%${username}%` } } : null;
-  
+
 
   User.findAll({ where: condition })
     .then(data => {
@@ -65,7 +70,12 @@ exports.findOne = (req, res) => {
   User.findByPk(id)
     .then(data => {
       if (data) {
-        res.send(data);
+        // res.send(data);
+        res.status(200).json({
+          status: true,
+          message: 'success fetch user',
+          data: data
+        });
       } else {
         res.status(404).send({
           message: `Cannot find User with id=${id}.`
