@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Login Page</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/login&register.css" type="text/css" />
+</head>
+
+<body>
+  <div class="login-box">
+    <h1>Login</h1>
+    <form class="needs-validation" id="login-form" novalidate>
+      <div class="form-floating mb-3">
+        <input type="email" class="form-control" id="floatingInput" placeholder="Email address" required />
+        <label for="floatingInput">Email address</label>
+        <div class="invalid-feedback">
+          Please provide a valid email.
+        </div>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="password" class="form-control" id="floatingPassword" placeholder="Password" required />
+        <label for="floatingPassword">Password</label>
+        <div class="invalid-feedback">
+          Please provide a valid password.
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" onclick="login()">Submit</button>
+    </form>
+    <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+  </div>
+  <script src="js/script.js"></script>
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script>
+    function login() {
+      var email = document.getElementById("floatingInput").value;
+      var password = document.getElementById("floatingPassword").value;
+
+      const loginData = {
+        email: email,
+        password: password
+      };
+
+      if (!email || !password) {
+        alert("All fields required");
+        return;
+      }
+      
+
+      fetch('http://localhost:3000/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(loginData)
+      })
+        .then(response => {
+          if (response.ok) {
+            return response.json()
+          } else {
+            throw new Error(`Request failed: ${response.status}`)
+          }
+        })
+        .then(data => {
+          console.log("Response Data:", data);
+          if (data.status) {
+            alert("Login successful");
+            window.location.href = './admin-ui/index.html';
+          } else {
+            
+            alert(data.message);
+          }
+        })
+        .catch(error => {
+          alert('Wrong Credentials')
+          console.error(error)
+        });
+
+    }
+  </script>
+</body>
+
+</html>

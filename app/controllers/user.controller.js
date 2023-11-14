@@ -1,4 +1,3 @@
-const { SET_DEFERRED } = require("sequelize/types/deferrable");
 const db = require("../models");
 const User = db.users;
 const Op = db.Sequelize.Op;
@@ -14,7 +13,7 @@ exports.create = (req, res) => {
   }
 
   // Create a user
-  const user = {
+  const user = {  
     username: req.body.username,
     password: req.body.password
   };
@@ -38,6 +37,7 @@ exports.create = (req, res) => {
 exports.findAll = (req, res) => {
   const username = req.query.username;
   var condition = username ? { username: { [Op.like]: `%${username}%` } } : null;
+  
 
   User.findAll({ where: condition })
     .then(data => {
