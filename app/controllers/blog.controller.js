@@ -15,15 +15,15 @@ exports.create = (req, res) => {
 
   // Create a user
   const blog = {
-    username: req.body.title,
-    password: req.body.content
+    title: req.body.title,
+    content: req.body.content
   };
 
   // Save user in the database
   Blog.create(blog)
     .then(data => {
       // res.send({
-      //   message: "User created successfully!",
+      //   message: "blog created successfully!",
       //   data: data
       // });
       res.status(201).send({
@@ -36,11 +36,11 @@ exports.create = (req, res) => {
       res.status(500).send({
         status: false,
         message:
-          err.message || "Some error occurred while creating the user."
+          err.message || "Some error occurred while creating the blog."
       });
     });
 };
-// Retrieve all users from the database.
+// Retrieve all blogs from the database.
 exports.findAll = (req, res) => {
   const title = req.query.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
@@ -60,7 +60,7 @@ exports.findAll = (req, res) => {
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving users."
+          err.message || "Some error occurred while retrieving blogs."
       });
     });
 };
@@ -75,7 +75,7 @@ exports.findOne = (req, res) => {
         // res.send(data);
         res.status(200).send({
           status: true,
-          message: 'success fetch blog',
+          message: `Success find Blog with id=${id}.`,
           data: data
         });
       } else {
@@ -92,23 +92,23 @@ exports.findOne = (req, res) => {
     });
 };
 
-// Update a user by the id in the request
+// Update a blog by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
 
-  User.update(req.body, {
+  Blog.update(req.body, {
     where: { id: id }
   })
     .then(num => {
       if (num == 1) {
         res.send({
           status: true,
-          message: "user was updated successfully."
+          message: "blog was updated successfully."
         });
       } else {
         res.send({
           status: false,
-          message: `Cannot update user with id=${id}. Maybe user was not found or req.body is empty!`
+          message: `Cannot update user with id=${id}. Maybe blog was not found or req.body is empty!`
         });
       }
     })

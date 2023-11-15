@@ -1,16 +1,16 @@
-document.getElementById('submitUser').addEventListener('click', function (e) {
+document.getElementById('submitBlog').addEventListener('click', function (e) {
     e.preventDefault();
-    addUser();
+    addBlog();
 });
 
 
 const tableBody = document.querySelector('tbody');
 
-function fetchAllUsers() {
-    fetch('http://localhost:3000/api/users/')
+function fetchAllBlogs() {
+    fetch('http://localhost:3000/api/blogs/')
         .then(res => res.json())
-        .then(userData => {
-            setTableData(userData);
+        .then(blogData => {
+            setTableData(blogData);
         })
         .catch(error => {
             console.error(`Error: ${error}`);
@@ -21,28 +21,28 @@ function setTableData(data) {
     tableBody.innerHTML = '';
     resut = data.data;
 
-    resut.forEach(user => {
-        const dateCreatedAt = new Date(user.createdAt);
+    resut.forEach(blog => {
+        const dateCreatedAt = new Date(blog.createdAt);
         dateString = new Date(dateCreatedAt).toUTCString();
         dateCreatedAtString = dateString.split(' ').slice(0, 6).join(' ');
 
-        const dateUpdatedAt = Date(user.updatedAt);
+        const dateUpdatedAt = Date(blog.updatedAt);
         dateString = new Date(dateUpdatedAt).toUTCString();
         dateUpdatedAtString = dateString.split(' ').slice(0, 6).join(' ');
 
-        console.log(user)
+        console.log(blog)
         const tableRow = document.createElement('tr');
         tableRow.innerHTML = `
-        <td >${user.id}</td>
-            <td >${user.username}</td>
-            <td >${user.password}</td>
+        <td >${blog.id}</td>
+            <td >${blog.title}</td>
+            <td >${blog.content}</td>
             <td >${dateCreatedAtString}</td>
             <td >${dateUpdatedAtString}</td>
 
             <td>                
                 <button type="button" class="btn btn-primary updateBtn" data-bs-toggle="modal"
-                data-bs-target="#updateModal" onclick="showModal(${user.id})">Update</button>   
-                <button type="button" onclick="removeUser(${user.id})" class="btn btn-danger">Delete</button>
+                data-bs-target="#updateModal" onclick="showModal(${blog.id})">Update</button>   
+                <button type="button" onclick="removeBlog(${blog.id})" class="btn btn-danger">Delete</button>
             </td>
         `;
 
@@ -52,28 +52,28 @@ function setTableData(data) {
 
 
 
-function addUser() {
+function addBlog() {
     const addmodal = document.getElementById('addModal');
     const addModalInit = new bootstrap.Modal(addmodal);
 
-    const username = document.getElementById('userName').value
-    const password = document.getElementById('passWord').value
+    const title = document.getElementById('addTitle').value
+    const content = document.getElementById('addContent').value
 
 
 
 
-    fetch('http://localhost:3000/api/users/create', {
+    fetch('http://localhost:3000/api/blogs/create', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json'
         },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ title, content })
     })
         .then(res => res.json())
         .then(data => {
 
 
-            if (!username || !password) {
+            if (!title || !content) {
                 // alert('All fields required!!!')
                 alert(data.message);
                 return;
@@ -82,7 +82,7 @@ function addUser() {
 
             if (data) {
                 addModalInit.hide();
-                fetchAllUsers();
+                fetchAllBlogs();
                 clearAllInputs();
 
 
@@ -98,8 +98,8 @@ function addUser() {
         })
 }
 
-function getUserById(id) {
-    return fetch(`http://localhost:3000/api/users/${id}`)
+function getBlogById(id) {
+    return fetch(`http://localhost:3000/api/blogs/${id}`)
         .then(res => {
             if (res.ok) {
                 return res.json();
@@ -110,27 +110,12 @@ function getUserById(id) {
             console.error(`Error: ${error}`);
         });
 }
-
-// function getUserById(id) {
-//     return fetch(`http://localhost:3000/users/read/${id}`)
-//         .then(res => {
-//             if (res.ok) {
-//                 return res.json()
-//             } else {
-//                 throw new Error(`Error: ${error}`)
-//             }
-//         })
-//         .catch(error => {
-//             console.error(`Error: ${error}`)
-//         })
-// }
-
-function removeUser(id) {
+function removeBlog(id) {
     const confirmationDialog = confirm('Are you sure you want to delete');
 
 
     if (confirmationDialog) {
-        fetch(`http://localhost:3000/api/users/delete/${id}`, {
+        fetch(`http://localhost:3000/api/blogs/delete/${id}`, {
             method: 'DELETE',
             mode: 'cors', // this cannot be 'no-cors'
             headers: {
@@ -142,9 +127,9 @@ function removeUser(id) {
                 console.log('response', response)
                 if (response.ok) {
                     // console.log('response', response)
-                    alert("Successfully removed users")
+                    alert("Successfully removed blog")
                     // window.location.reload()
-                    fetchAllUsers()
+                    fetchAllBlogs()
                     // trigger F5/delete/refresh
                 }
                 else if (response.status == 400) {
@@ -171,11 +156,11 @@ OK
 function showModal(id) {
 
 
-    getUserById(id).then(user => {
+    getBlogById(id).then(blog => {
 
-        result = user.data;
-        document.getElementById('updateUsername').value = result.username;
-        document.getElementById('updatePassword').value = result.password;
+        result = blog.data;
+        document.getElementById('updateTitle').value = result.title;
+        document.getElementById('updateContent').value = result.content;
     })
         .catch(error => {
             console.error(`Error: ${error}`)
@@ -188,29 +173,29 @@ function showModal(id) {
             <button 
                 type="button" 
                 class="btn btn-primary" 
-                id="updateUserBtn" 
+                id="updateBlogBtn" 
                 data-bs-dismiss="modal"
-                onclick="updateUser(${id})"
+                onclick="updateBlog(${id})"
             >Update</button>
         `;
     }
 }
-function updateUser(id) {
+function updateBlog(id) {
     const modal = document.getElementById('updateModal');
     const modalInit = new bootstrap.Modal(modal);
 
-    const updateUsername = document.getElementById('updateUsername').value;
-    const updatePassword = document.getElementById('updatePassword').value;
+    const updateTitle = document.getElementById('updateTitle').value;
+    const updateContent = document.getElementById('updateContent').value;
 
     const fieldToBeUpdated = {};
 
 
-    if (updateUsername) {
-        fieldToBeUpdated.username = updateUsername;
+    if (updateTitle) {
+        fieldToBeUpdated.title = updateTitle;
     }
 
-    if (updatePassword) {
-        fieldToBeUpdated.password = updatePassword;
+    if (updateContent) {
+        fieldToBeUpdated.content = updateContent;
     }
 
     if (Object.keys(fieldToBeUpdated).length === 0) {
@@ -218,7 +203,7 @@ function updateUser(id) {
         return;
     }
 
-    fetch(`http://localhost:3000/api/users/update/${id}`, {
+    fetch(`http://localhost:3000/api/blogs/update/${id}`, {
         method: 'PUT',
         headers: {
             'Content-type': 'application/json'
@@ -232,7 +217,7 @@ function updateUser(id) {
         }
     }).then(data => {
         if (data.status) {
-            // fetchAllUsers();
+            fetchAllBlogs();
             modalInit.hide();
             // clearFormFields('update');
             // clearFormFields('update');
@@ -241,7 +226,7 @@ function updateUser(id) {
 
         } else {
             alert(data.message);
-            fetchAllUsers();
+            fetchAllBlogs();
         }
     }).catch(error => {
         console.error(`Error: ${error}`);
@@ -255,4 +240,4 @@ function clearAllInputs(event) {
     var allInputs = document.querySelectorAll('input');
     allInputs.forEach(singleInput => singleInput.value = '');
 }
-fetchAllUsers();
+fetchAllBlogs();
