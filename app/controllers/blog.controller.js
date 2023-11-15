@@ -1,11 +1,11 @@
 const db = require("../models");
-const User = db.users;
+const Blog = db.blogs;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new user
 exports.create = (req, res) => {
   // Validate request
-  if (!req.body.username || !req.body.password) {
+  if (!req.body.title || !req.body.content) {
     res.status(400).send({
       status: false,
       message: "Content can not be empty!"
@@ -14,13 +14,13 @@ exports.create = (req, res) => {
   }
 
   // Create a user
-  const user = {
-    username: req.body.username,
-    password: req.body.password
+  const blog = {
+    username: req.body.title,
+    password: req.body.content
   };
 
   // Save user in the database
-  User.create(user)
+  Blog.create(blog)
     .then(data => {
       // res.send({
       //   message: "User created successfully!",
@@ -28,7 +28,7 @@ exports.create = (req, res) => {
       // });
       res.status(201).send({
         status: true,
-        message: "User created successfully!",
+        message: "Blog created successfully!",
         data: data
       });
     })
@@ -42,16 +42,16 @@ exports.create = (req, res) => {
 };
 // Retrieve all users from the database.
 exports.findAll = (req, res) => {
-  const username = req.query.username;
-  var condition = username ? { username: { [Op.like]: `%${username}%` } } : null;
+  const title = req.query.title;
+  var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
 
 
-  User.findAll({ where: condition })
+  Blog.findAll({ where: condition })
     .then(data => {
       // res.send(data);
       res.status(200).send({
         status: true,
-        message: 'success fetch all users',
+        message: 'success fetch all blog',
         data: data
       });
       // console.log(Object.keys(req.query).length);
@@ -69,25 +69,25 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  User.findByPk(id)
+  Blog.findByPk(id)
     .then(data => {
       if (data) {
         // res.send(data);
         res.status(200).send({
           status: true,
-          message: 'success fetch user',
+          message: 'success fetch blog',
           data: data
         });
       } else {
         res.status(404).send({
-          message: `Cannot find User with id=${id}.`
+          message: `Cannot find Blog with id=${id}.`
         });
       }
     })
     .catch(err => {
       res.status(500).send({
         status: false,
-        message: "Error retrieving user with id=" + id
+        message: "Error retrieving blog with id=" + id
       });
     });
 };
@@ -124,14 +124,14 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  User.destroy({
+  Blog.destroy({
     where: { id: id }
   })
     .then(num => {
       if (num == 1) {
         res.send({
           status: true,
-          message: "user was deleted successfully!"
+          message: "Blog was deleted successfully!"
         });
       } else {
         res.send({
@@ -150,12 +150,15 @@ exports.delete = (req, res) => {
 
 // Delete all users from the database.
 exports.deleteAll = (req, res) => {
-  User.destroy({
+  Blog.destroy({
     where: {},
     truncate: false
   })
     .then(nums => {
-      res.send({ message: `${nums} users were deleted successfully!` });
+      res.send({
+        status: true,
+        message: `${nums} users were deleted successfully!`
+      });
     })
     .catch(err => {
       res.status(500).send({
@@ -167,7 +170,7 @@ exports.deleteAll = (req, res) => {
 
 // find all published user
 exports.findAllPublished = (req, res) => {
-  User.findAll({ where: { published: true } })
+  Blog.findAll({ where: { published: true } })
     .then(data => {
       res.send(data);
     })

@@ -12,7 +12,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors({
-    origin: 'http://127.0.0.1:5501'
+    origin: 'http://127.0.0.1:5500'
 }));
 
 // parse requests of content-type - application/json
@@ -43,6 +43,7 @@ app.get("/", (req, res) => {
 
 require("./app/routes/turorial.routes")(app);
 require("./app/routes/user.routes")(app);
+require("./app/routes/blog.routes")(app);
 
 
 // set port, listen for requests

@@ -69,7 +69,6 @@ function addUser() {
                 // alert('All fields required!!!')
                 alert(data.message);
                 return;
-                addModalInit.hide();
 
             }
 
@@ -165,7 +164,7 @@ function showModal(id) {
   
 
     getUserById(id).then(user => {
-        console.log(user)
+        
         result = user.data;
         document.getElementById('updateUsername').value = result.username;
         document.getElementById('updatePassword').value = result.password;
@@ -176,7 +175,6 @@ function showModal(id) {
 
 
     const modalFooter = document.getElementById('modal-footer-id');
-
     if (modalFooter) {
         modalFooter.innerHTML = `
             <button 
