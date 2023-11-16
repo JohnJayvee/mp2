@@ -51,7 +51,6 @@ function setTableData(data) {
 }
 
 
-
 function addBlog() {
     const addmodal = document.getElementById('addModal');
     const addModalInit = new bootstrap.Modal(addmodal);
